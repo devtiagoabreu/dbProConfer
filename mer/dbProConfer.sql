@@ -194,7 +194,7 @@ CREATE TABLE pessoaProduto (
   pessoa_documento VARCHAR(50)  NOT NULL  ,
   descricao VARCHAR(255)  NOT NULL  ,
   unidadeMedida VARCHAR(10)  NULL  ,
-  conferenciaVolume VARCHAR(20)  NULL DEFAULT CAIXA  COMMENT 'CAIXA - FARDO - CONTAINER - GALÃO' ,
+  conferenciaVolume VARCHAR(20)  NULL DEFAULT 'CAIXA'  COMMENT 'CAIXA - FARDO - CONTAINER - GALÃO' ,
   ncm VARCHAR(30)  NULL  ,
   cst VARCHAR(10)  NULL  ,
   dataCadastro TIMESTAMP  NULL DEFAULT now() ,
