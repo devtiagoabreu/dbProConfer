@@ -8,7 +8,6 @@ PRIMARY KEY(id));
 
 
 
-
 CREATE TABLE empresa (
   id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
   documento VARCHAR(50)  NOT NULL  ,
@@ -18,7 +17,9 @@ CREATE TABLE empresa (
   email2 VARCHAR(255)  NULL  ,
   site VARCHAR(255)  NULL  ,
   contato1 VARCHAR(20)  NULL  ,
-  contato2 VARCHAR(20)  NULL    ,
+  contato2 VARCHAR(20)  NULL  ,
+  ativo TINYINT UNSIGNED  NULL DEFAULT 1 ,
+  dataCadastro TIMESTAMP  NULL DEFAULT now()   ,
 PRIMARY KEY(id));
 
 
@@ -33,7 +34,7 @@ PRIMARY KEY(id));
 
 CREATE TABLE conferenciaTipo (
   id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
-  descricao VARCHAR(60)  NOT NULL   COMMENT 'ENTRADA - SA�DA - INVENT�RIO -'   ,
+  descricao VARCHAR(60)  NOT NULL   COMMENT 'ENTRADA - SAÍDA - INVENTÁRIO -'   ,
 PRIMARY KEY(id));
 
 
@@ -48,7 +49,7 @@ CREATE TABLE empresaProduto (
   descricaoOld VARCHAR(255)  NULL  ,
   descricaoNew VARCHAR(255)  NULL  ,
   unidadeMedida VARCHAR(10)  NULL  ,
-  conferenciaVolume VARCHAR(20)  NULL DEFAULT CAIXA  COMMENT 'CAIXA - FARDO - CONTAINER - GAL�O' ,
+  conferenciaVolume VARCHAR(20)  NULL DEFAULT CAIXA  COMMENT 'CAIXA - FARDO - CONTAINER - GALÃO' ,
   ncm VARCHAR(30)  NULL  ,
   cst VARCHAR(10)  NULL  ,
   json TEXT  NULL  ,
@@ -132,7 +133,7 @@ CREATE TABLE pessoaProduto (
   pessoa_documento VARCHAR(50)  NOT NULL  ,
   descricao VARCHAR(255)  NOT NULL  ,
   unidadeMedida VARCHAR(10)  NULL  ,
-  conferenciaVolume VARCHAR(20)  NULL DEFAULT CAIXA  COMMENT 'CAIXA - FARDO - CONTAINER - GAL�O' ,
+  conferenciaVolume VARCHAR(20)  NULL DEFAULT CAIXA  COMMENT 'CAIXA - FARDO - CONTAINER - GALÃO' ,
   ncm VARCHAR(30)  NULL  ,
   cst VARCHAR(10)  NULL  ,
   dataCadastro TIMESTAMP  NULL DEFAULT now() ,
@@ -219,6 +220,7 @@ INDEX nfeLoteRomaneio_FKIndex2(empresaProduto_codigo),
 
 CREATE TABLE conferencia (
   id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
+  nfeLoteRomaneio_id INTEGER UNSIGNED  NULL  ,
   empresaProduto_codigo VARCHAR(60)  NOT NULL  ,
   nfeLote_nfe_cnpj VARCHAR(50)  NOT NULL  ,
   nfeLote_nfe_numero INTEGER UNSIGNED  NOT NULL  ,
@@ -231,7 +233,8 @@ CREATE TABLE conferencia (
 PRIMARY KEY(id)  ,
 INDEX conferencia_FKIndex1(conferenciaTipo_id)  ,
 INDEX conferencia_FKIndex2(nfeLote_lote_id, nfeLote_nfe_numero, nfeLote_nfe_cnpj)  ,
-INDEX conferencia_FKIndex3(empresaProduto_codigo),
+INDEX conferencia_FKIndex3(empresaProduto_codigo)  ,
+INDEX conferencia_FKIndex4(nfeLoteRomaneio_id),
   FOREIGN KEY(conferenciaTipo_id)
     REFERENCES conferenciaTipo(id)
       ON DELETE NO ACTION
@@ -242,6 +245,10 @@ INDEX conferencia_FKIndex3(empresaProduto_codigo),
       ON UPDATE NO ACTION,
   FOREIGN KEY(empresaProduto_codigo)
     REFERENCES empresaProduto(codigo)
+      ON DELETE NO ACTION
+      ON UPDATE NO ACTION,
+  FOREIGN KEY(nfeLoteRomaneio_id)
+    REFERENCES nfeLoteRomaneio(id)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION);
 
