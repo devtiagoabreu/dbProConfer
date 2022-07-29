@@ -1,10 +1,11 @@
 CREATE DATABASE dbProConfer CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 
-CREATE TABLE pessoaNatureza (
+CREATE TABLE pessoaTipo (
   id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
-  descricao VARCHAR(60)  NOT NULL DEFAULT 'Pessoa Jurídica'  COMMENT 'Pessoa Jurídica - Pessoa Física'   ,
+  descricao VARCHAR(60)  NOT NULL DEFAULT FORNECEDOR  COMMENT 'FORNECEDOR - CLIENTE - TRANSPORTADORA - TERCEIRO'   ,
 PRIMARY KEY(id));
+
 
 
 
@@ -24,11 +25,28 @@ PRIMARY KEY(id));
 
 
 
-CREATE TABLE pessoaTipo (
+CREATE TABLE pessoaNatureza (
   id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
-  descricao VARCHAR(60)  NOT NULL DEFAULT FORNECEDOR  COMMENT 'FORNECEDOR - CLIENTE - TRANSPORTADORA - TERCEIRO'   ,
+  descricao VARCHAR(60)  NOT NULL DEFAULT 'Pessoa Jurídica'  COMMENT 'Pessoa Jurídica - Pessoa Física'   ,
 PRIMARY KEY(id));
 
+
+
+
+CREATE TABLE apps (
+  id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
+  descricao VARCHAR(255)  NOT NULL  ,
+  codigo VARCHAR(20)  NOT NULL  ,
+  ativo TINYINT UNSIGNED  NULL DEFAULT 1   ,
+PRIMARY KEY(id));
+
+
+
+CREATE TABLE permissoes (
+  id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
+  descricao VARCHAR(60)  NULL  ,
+  ativo TINYINT UNSIGNED  NULL DEFAULT 1   ,
+PRIMARY KEY(id));
 
 
 
@@ -37,6 +55,25 @@ CREATE TABLE conferenciaTipo (
   descricao VARCHAR(60)  NOT NULL   COMMENT 'ENTRADA - SAÍDA - INVENTÁRIO -'   ,
 PRIMARY KEY(id));
 
+
+
+
+CREATE TABLE usuario (
+  id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
+  permissoes_id INTEGER UNSIGNED  NOT NULL  ,
+  nome VARCHAR(255)  NOT NULL  ,
+  login VARCHAR(255)  NOT NULL  ,
+  senha VARCHAR(255)  NOT NULL  ,
+  token VARCHAR(255)  NOT NULL  ,
+  email VARCHAR(255)  NULL  ,
+  ativo TINYINT UNSIGNED  NULL DEFAULT 1 ,
+  dataCadastro TIMESTAMP  NULL DEFAULT now()   ,
+PRIMARY KEY(id)  ,
+INDEX usuario_FKIndex1(permissoes_id),
+  FOREIGN KEY(permissoes_id)
+    REFERENCES permissoes(id)
+      ON DELETE NO ACTION
+      ON UPDATE NO ACTION);
 
 
 
@@ -103,9 +140,27 @@ INDEX pessoa_FKIndex2(pessoaNaturezas_id),
 
 
 
+CREATE TABLE permissoesApps (
+  permissoes_id INTEGER UNSIGNED  NOT NULL  ,
+  apps_id INTEGER UNSIGNED  NOT NULL    ,
+PRIMARY KEY(permissoes_id, apps_id)  ,
+INDEX permissoes_has_apps_FKIndex1(permissoes_id)  ,
+INDEX permissoes_has_apps_FKIndex2(apps_id),
+  FOREIGN KEY(permissoes_id)
+    REFERENCES permissoes(id)
+      ON DELETE NO ACTION
+      ON UPDATE NO ACTION,
+  FOREIGN KEY(apps_id)
+    REFERENCES apps(id)
+      ON DELETE NO ACTION
+      ON UPDATE NO ACTION);
+
+
+
 CREATE TABLE nfe (
   cnpj VARCHAR(50)  NOT NULL  ,
   numero INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
+  usuario_id INTEGER UNSIGNED  NOT NULL  ,
   empresa_id INTEGER UNSIGNED  NOT NULL  ,
   chave VARCHAR(60)  NOT NULL  ,
   pessoa_documento VARCHAR(50)  NOT NULL  ,
@@ -116,13 +171,18 @@ CREATE TABLE nfe (
   json TEXT  NULL    ,
 PRIMARY KEY(cnpj, numero)  ,
 INDEX nfe_FKIndex1(pessoa_documento)  ,
-INDEX nfe_FKIndex2(empresa_id),
+INDEX nfe_FKIndex2(empresa_id)  ,
+INDEX nfe_FKIndex3(usuario_id),
   FOREIGN KEY(pessoa_documento)
     REFERENCES pessoa(documento)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION,
   FOREIGN KEY(empresa_id)
     REFERENCES empresa(id)
+      ON DELETE NO ACTION
+      ON UPDATE NO ACTION,
+  FOREIGN KEY(usuario_id)
+    REFERENCES usuario(id)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION);
 
@@ -195,6 +255,7 @@ INDEX lote_has_nfe_FKIndex2(nfe_cnpj, nfe_numero),
 
 CREATE TABLE nfeLoteRomaneio (
   id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
+  usuario_id INTEGER UNSIGNED  NOT NULL  ,
   empresaProduto_codigo VARCHAR(60)  NOT NULL  ,
   nfeLote_nfe_cnpj VARCHAR(50)  NOT NULL  ,
   nfeLote_nfe_numero INTEGER UNSIGNED  NOT NULL  ,
@@ -206,7 +267,8 @@ CREATE TABLE nfeLoteRomaneio (
   ativo TINYINT UNSIGNED  NULL DEFAULT 1   ,
 PRIMARY KEY(id)  ,
 INDEX nfeRomaneio_FKIndex1(nfeLote_lote_id, nfeLote_nfe_numero, nfeLote_nfe_cnpj)  ,
-INDEX nfeLoteRomaneio_FKIndex2(empresaProduto_codigo),
+INDEX nfeLoteRomaneio_FKIndex2(empresaProduto_codigo)  ,
+INDEX nfeLoteRomaneio_FKIndex3(usuario_id),
   FOREIGN KEY(nfeLote_lote_id, nfeLote_nfe_numero, nfeLote_nfe_cnpj)
     REFERENCES nfeLote(lote_id, nfe_numero, nfe_cnpj)
       ON DELETE NO ACTION
@@ -214,12 +276,17 @@ INDEX nfeLoteRomaneio_FKIndex2(empresaProduto_codigo),
   FOREIGN KEY(empresaProduto_codigo)
     REFERENCES empresaProduto(codigo)
       ON DELETE NO ACTION
+      ON UPDATE NO ACTION,
+  FOREIGN KEY(usuario_id)
+    REFERENCES usuario(id)
+      ON DELETE NO ACTION
       ON UPDATE NO ACTION);
 
 
 
 CREATE TABLE conferencia (
   id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
+  usuario_id INTEGER UNSIGNED  NOT NULL  ,
   nfeLoteRomaneio_id INTEGER UNSIGNED  NULL  ,
   empresaProduto_codigo VARCHAR(60)  NOT NULL  ,
   nfeLote_nfe_cnpj VARCHAR(50)  NOT NULL  ,
@@ -234,7 +301,8 @@ PRIMARY KEY(id)  ,
 INDEX conferencia_FKIndex1(conferenciaTipo_id)  ,
 INDEX conferencia_FKIndex2(nfeLote_lote_id, nfeLote_nfe_numero, nfeLote_nfe_cnpj)  ,
 INDEX conferencia_FKIndex3(empresaProduto_codigo)  ,
-INDEX conferencia_FKIndex4(nfeLoteRomaneio_id),
+INDEX conferencia_FKIndex4(nfeLoteRomaneio_id)  ,
+INDEX conferencia_FKIndex5(usuario_id),
   FOREIGN KEY(conferenciaTipo_id)
     REFERENCES conferenciaTipo(id)
       ON DELETE NO ACTION
@@ -249,6 +317,10 @@ INDEX conferencia_FKIndex4(nfeLoteRomaneio_id),
       ON UPDATE NO ACTION,
   FOREIGN KEY(nfeLoteRomaneio_id)
     REFERENCES nfeLoteRomaneio(id)
+      ON DELETE NO ACTION
+      ON UPDATE NO ACTION,
+  FOREIGN KEY(usuario_id)
+    REFERENCES usuario(id)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION);
 
@@ -282,7 +354,9 @@ CREATE TABLE conferenciaVolume (
   pesoBruto DECIMAL(18,4)  NULL  ,
   pesoLiquido DECIMAL(18,4)  NULL  ,
   tara DECIMAL(18,4)  NULL  ,
-  metros DECIMAL(18,4)  NULL    ,
+  metros DECIMAL(18,4)  NULL  ,
+  quantidade DECIMAL(18,4)  NULL   COMMENT 'DEVE SER USADO COM UNIDADE DE MEDIDA ESPECÍFICA' ,
+  dataCadastro TIMESTAMP  NULL DEFAULT now()   ,
 PRIMARY KEY(id)  ,
 INDEX volume_FKIndex1(conferencia_id),
   FOREIGN KEY(conferencia_id)
