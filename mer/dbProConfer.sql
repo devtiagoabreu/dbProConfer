@@ -210,7 +210,7 @@ INDEX fornecedoresProdutos_FKIndex1(pessoa_documento),
 
 
 CREATE TABLE lote (
-  id INTEGER UNSIGNED  NOT NULL  ,
+  id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
   pessoaProduto_codigo VARCHAR(60)  NOT NULL  ,
   lote VARCHAR(60)  NOT NULL  ,
   obs VARCHAR(255)  NULL  ,
@@ -219,7 +219,7 @@ CREATE TABLE lote (
   ncm VARCHAR(30)  NULL  ,
   cst VARCHAR(10)  NULL  ,
   cfop VARCHAR(10)  NULL  ,
-  unidadeMedida VARCHAR(10)  NOT NULL DEFAULT 'KG'  COMMENT 'KG - M - L' ,
+  unidadeMedida VARCHAR(10)  NOT NULL DEFAULT KG  COMMENT 'KG - M - L' ,
   quantidadeVolumes DECIMAL(18,4)  NOT NULL  ,
   valorUnitario DECIMAL(18,4)  NULL  ,
   valorTotal DECIMAL(18,4)  NULL  ,
