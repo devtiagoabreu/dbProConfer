@@ -59,3 +59,5 @@ INSERT INTO dbproconfer.pessoa (documento,pessoaTipos_id,pessoaNaturezas_id,raza
 INSERT INTO dbproconfer.pessoaproduto (codigo,pessoa_documento,descricao,unidadeMedida,conferenciaVolume,ncm,cst)
 	VALUES ('1120','03403794000122','FIO 100% ALGODAO TIT. 20/1 TORCAO TECELAGEM','KG','CAIXA','52051200','000');
 
+INSERT INTO dbproconfer.empresaproduto (codigo,empresa_id,codigoOld,codigoNew,descricao,descricaoOld,unidadeMedida,conferenciaVolume,ncm,cst)
+	VALUES ('F20/1',1,'FS1507','700020001000001','FIO 20/1 100% ALGODÃO CRU .','FIO 20/1 ALGODAO 100%','KG','CAIXA','52051200','000');
