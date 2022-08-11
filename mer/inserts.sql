@@ -55,3 +55,6 @@ INSERT INTO dbproconfer.empresa (documento,razaoSocialNome,fantasia,email1,site,
 
 INSERT INTO dbproconfer.pessoa (documento,pessoaTipos_id,pessoaNaturezas_id,razaoSocialNome,fantasia,email1,site,contato1,logradouro,numero,bairro,cidade,uf,cep,sobre,dataAbertura)
 	VALUES ('03403794000122',1,1,'FIACAO ITABAIANA LTDA','FIACAO ITABAIANA','contato@fiacaoitabaiana.com.br','http://www.fiacaoitabaiana.com.br/index.htm','7921067500','Avenida Barao do Rio Branco','817','CENTRO','RIBEIROPOLIS','SE','49530-000','A atividade de estamparia e texturização em fios, tecidos, artefatos têxteis e peças do vestuário, envolve a modalidade realizada sob contrato, inclusive os serviços em material próprio com destinação futura para revenda. Texturização refere-se ao serviço de cobrir e decorar algo com uma nova textura com algum relevo (massa ou tinta), enquanto estamparia corresponde à atividade de colocar estampas nos tecidos (como a customização de um uniforme, inclusão de propaganda ou patrocinador em uma camisa, bem como para fins exclusivamente decorativos).','1999-09-17');
+
+INSERT INTO dbproconfer.pessoaproduto (pessoa_documento,descricao,unidadeMedida,conferenciaVolume,ncm,cst)
+	VALUES ('03403794000122','FIO 100% ALGODAO TIT. 20/1 TORCAO TECELAGEM','KG','CAIXA','52051200','000');
