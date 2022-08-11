@@ -73,3 +73,9 @@ INSERT INTO dbproconfer.nfelote (lote_id,nfe_chave)
 
 INSERT INTO dbproconfer.conferencia (nfeLote_nfe_chave,usuario_id,empresaProduto_codigo,nfeLote_lote_id,conferenciaTipo_id)
 	VALUES ('28220703403794000122550010000425261000566468',1,'F20/1CRU',1,1);
+
+INSERT INTO dbproconfer.conferenciavolume (conferencia_id,empresaCodigoVolume,fornecedorCodigoVolume,pesoBruto,pesoLiquido,tara)
+	VALUES (2,'0000000001','0005049640',40.65,38.3,2.35);
+
+INSERT INTO dbproconfer.conferenciavolume (conferencia_id,empresaCodigoVolume,fornecedorCodigoVolume,pesoBruto,pesoLiquido,tara)
+	VALUES (2,'0000000002','0005049641',40.65,38.3,2.35);	
