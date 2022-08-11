@@ -28,7 +28,7 @@ PRIMARY KEY(id));
 
 CREATE TABLE pessoaNatureza (
   id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
-  descricao VARCHAR(60)  NOT NULL DEFAULT 'Pessoa Jurídica'  COMMENT 'Pessoa Jurídica - Pessoa Física'   ,
+  descricao VARCHAR(60)  NOT NULL DEFAULT 'PESSOA JURÍDICA'  COMMENT 'PESSOA JURÍDICA - PESSOA FÍSICA'   ,
 PRIMARY KEY(id));
 
 
@@ -159,18 +159,18 @@ INDEX permissoes_has_apps_FKIndex2(apps_id),
 
 
 CREATE TABLE nfe (
+  chave VARCHAR(60)  NOT NULL  ,
   cnpj VARCHAR(50)  NOT NULL  ,
-  numero INTEGER UNSIGNED  NOT NULL ,
+  serie VARCHAR(20)  NOT NULL  ,
+  numero VARCHAR(50)  NOT NULL  ,
+  pessoa_documento VARCHAR(50)  NOT NULL  ,
   usuario_id INTEGER UNSIGNED  NOT NULL  ,
   empresa_id INTEGER UNSIGNED  NOT NULL  ,
-  chave VARCHAR(60)  NOT NULL  ,
-  pessoa_documento VARCHAR(50)  NOT NULL  ,
-  serie INTEGER UNSIGNED  NOT NULL  ,
   dataEmissao DATE  NOT NULL  ,
   cfop VARCHAR(10)  NULL  ,
   dataCadastro TIMESTAMP  NULL DEFAULT now() ,
   json TEXT  NULL    ,
-PRIMARY KEY(cnpj, numero)  ,
+PRIMARY KEY(chave)  ,
 INDEX nfe_FKIndex1(pessoa_documento)  ,
 INDEX nfe_FKIndex2(empresa_id)  ,
 INDEX nfe_FKIndex3(usuario_id),
@@ -238,42 +238,37 @@ INDEX lote_FKIndex1(pessoaProduto_codigo),
 
 CREATE TABLE nfeLote (
   lote_id INTEGER UNSIGNED  NOT NULL  ,
-  nfe_numero INTEGER UNSIGNED  NOT NULL  ,
-  nfe_cnpj VARCHAR(50)  NOT NULL    ,
-PRIMARY KEY(lote_id, nfe_numero, nfe_cnpj)  ,
+  nfe_chave VARCHAR(60)  NOT NULL    ,
+PRIMARY KEY(lote_id, nfe_chave)  ,
 INDEX lote_has_nfe_FKIndex1(lote_id)  ,
-INDEX lote_has_nfe_FKIndex2(nfe_cnpj, nfe_numero),
+INDEX lote_has_nfe_FKIndex2(nfe_chave),
   FOREIGN KEY(lote_id)
     REFERENCES lote(id)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION,
-  FOREIGN KEY(nfe_cnpj, nfe_numero)
-    REFERENCES nfe(cnpj, numero)
+  FOREIGN KEY(nfe_chave)
+    REFERENCES nfe(chave)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION);
 
 
 
+
 CREATE TABLE nfeLoteRomaneio (
   id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
+  nfeLote_nfe_chave VARCHAR(60)  NOT NULL  ,
+  nfeLote_lote_id INTEGER UNSIGNED  NOT NULL  ,
   usuario_id INTEGER UNSIGNED  NOT NULL  ,
   empresaProduto_codigo VARCHAR(60)  NOT NULL  ,
-  nfeLote_nfe_cnpj VARCHAR(50)  NOT NULL  ,
-  nfeLote_nfe_numero INTEGER UNSIGNED  NOT NULL  ,
-  nfeLote_lote_id INTEGER UNSIGNED  NOT NULL  ,
   numero VARCHAR(20)  NULL  ,
   obs VARCHAR(255)  NULL  ,
   json TEXT  NULL  ,
   dataCadastro TIMESTAMP  NULL DEFAULT now() ,
   ativo TINYINT UNSIGNED  NULL DEFAULT 1   ,
 PRIMARY KEY(id)  ,
-INDEX nfeRomaneio_FKIndex1(nfeLote_lote_id, nfeLote_nfe_numero, nfeLote_nfe_cnpj)  ,
 INDEX nfeLoteRomaneio_FKIndex2(empresaProduto_codigo)  ,
-INDEX nfeLoteRomaneio_FKIndex3(usuario_id),
-  FOREIGN KEY(nfeLote_lote_id, nfeLote_nfe_numero, nfeLote_nfe_cnpj)
-    REFERENCES nfeLote(lote_id, nfe_numero, nfe_cnpj)
-      ON DELETE NO ACTION
-      ON UPDATE NO ACTION,
+INDEX nfeLoteRomaneio_FKIndex3(usuario_id)  ,
+INDEX nfeLoteRomaneio_FKIndex4(nfeLote_lote_id, nfeLote_nfe_chave),
   FOREIGN KEY(empresaProduto_codigo)
     REFERENCES empresaProduto(codigo)
       ON DELETE NO ACTION
@@ -281,17 +276,20 @@ INDEX nfeLoteRomaneio_FKIndex3(usuario_id),
   FOREIGN KEY(usuario_id)
     REFERENCES usuario(id)
       ON DELETE NO ACTION
+      ON UPDATE NO ACTION,
+  FOREIGN KEY(nfeLote_lote_id, nfeLote_nfe_chave)
+    REFERENCES nfeLote(lote_id, nfe_chave)
+      ON DELETE NO ACTION
       ON UPDATE NO ACTION);
 
 
 
 CREATE TABLE conferencia (
   id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
+  nfeLote_nfe_chave VARCHAR(60)  NOT NULL  ,
   usuario_id INTEGER UNSIGNED  NOT NULL  ,
   nfeLoteRomaneio_id INTEGER UNSIGNED  NULL  ,
   empresaProduto_codigo VARCHAR(60)  NOT NULL  ,
-  nfeLote_nfe_cnpj VARCHAR(50)  NOT NULL  ,
-  nfeLote_nfe_numero INTEGER UNSIGNED  NOT NULL  ,
   nfeLote_lote_id INTEGER UNSIGNED  NOT NULL  ,
   conferenciaTipo_id INTEGER UNSIGNED  NOT NULL  ,
   obs VARCHAR(255)  NULL  ,
@@ -300,7 +298,7 @@ CREATE TABLE conferencia (
   ativo TINYINT UNSIGNED  NULL DEFAULT 1   ,
 PRIMARY KEY(id)  ,
 INDEX conferencia_FKIndex1(conferenciaTipo_id)  ,
-INDEX conferencia_FKIndex2(nfeLote_lote_id, nfeLote_nfe_numero, nfeLote_nfe_cnpj)  ,
+INDEX conferencia_FKIndex2(nfeLote_lote_id, nfeLote_nfe_chave)  ,
 INDEX conferencia_FKIndex3(empresaProduto_codigo)  ,
 INDEX conferencia_FKIndex4(nfeLoteRomaneio_id)  ,
 INDEX conferencia_FKIndex5(usuario_id),
@@ -308,8 +306,8 @@ INDEX conferencia_FKIndex5(usuario_id),
     REFERENCES conferenciaTipo(id)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION,
-  FOREIGN KEY(nfeLote_lote_id, nfeLote_nfe_numero, nfeLote_nfe_cnpj)
-    REFERENCES nfeLote(lote_id, nfe_numero, nfe_cnpj)
+  FOREIGN KEY(nfeLote_lote_id, nfeLote_nfe_chave)
+    REFERENCES nfeLote(lote_id, nfe_chave)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION,
   FOREIGN KEY(empresaProduto_codigo)
@@ -364,7 +362,3 @@ INDEX volume_FKIndex1(conferencia_id),
     REFERENCES conferencia(id)
       ON DELETE NO ACTION
       ON UPDATE NO ACTION);
-
-
-
-

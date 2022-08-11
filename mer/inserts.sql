@@ -47,7 +47,7 @@ INSERT INTO dbproconfer.pessoatipo (descricao)
 INSERT INTO dbproconfer.usuario (permissoes_id,nome,login,senha,token,email)
 	VALUES (1,'ADMINISTRADOR DO SISTEMA','adm','852456','852456','adm@email.com');
 
-INSERT INTO dbproconfer.empresa (documento,razaoSocialNome,fantasia,email1,site,contato1)
+INSERT INTO dbproconfer.empresa (documento,razaoSocialNome,fantasia,email1,site,contato1,contato2)
 	VALUES ('07695188000189','PRO MODA TEXTIL LTDA','PRO MODA TEXTIL','contato@promodatextil.com.br','promodatextil.com.br','1934553686','1934553888');
 
 INSERT INTO dbproconfer.empresa (documento,razaoSocialNome,fantasia,email1,site,contato1)
@@ -60,4 +60,7 @@ INSERT INTO dbproconfer.pessoaproduto (codigo,pessoa_documento,descricao,unidade
 	VALUES ('1120','03403794000122','FIO 100% ALGODAO TIT. 20/1 TORCAO TECELAGEM','KG','CAIXA','52051200','000');
 
 INSERT INTO dbproconfer.empresaproduto (codigo,empresa_id,codigoOld,codigoNew,descricao,descricaoOld,descricaoNew,unidadeMedida,conferenciaVolume,ncm,cst)
-	VALUES ('F20/1CRU',1,'FS1507','700020001000001','FIO 20/1 100% ALGODÃO CRU .','FIO 20/1 ALGODAO 100%','FIO 20/1 100% ALGODÃO CRU .''KG','CAIXA','52051200','000');
+	VALUES ('F20/1CRU',1,'FS1507','700020001000001','FIO 20/1 100% ALGODÃO CRU .','FIO 20/1 ALGODAO 100%','FIO 20/1 100% ALGODÃO CRU .','KG','CAIXA','52051200','000');
+
+INSERT INTO dbproconfer.nfe (chave,cnpj,serie,numero,pessoa_documento,usuario_id,empresa_id,dataEmissao,cfop)
+	VALUES ('28220703403794000122550010000425261000566468','03403794000122','1','000042526','03403794000122',1,1,'2022-07-27','6101');
