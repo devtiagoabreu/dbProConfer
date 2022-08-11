@@ -323,7 +323,7 @@ INDEX conferencia_FKIndex5(usuario_id),
       ON DELETE NO ACTION
       ON UPDATE NO ACTION);
 
-
+ALTER TABLE dbproconfer.conferencia ADD romaneio varchar(100) NULL;
 
 CREATE TABLE nfeLoteRomaneioVolume (
   codigoVolume VARCHAR(50)  NOT NULL  ,

@@ -64,3 +64,12 @@ INSERT INTO dbproconfer.empresaproduto (codigo,empresa_id,codigoOld,codigoNew,de
 
 INSERT INTO dbproconfer.nfe (chave,cnpj,serie,numero,pessoa_documento,usuario_id,empresa_id,dataEmissao,cfop)
 	VALUES ('28220703403794000122550010000425261000566468','03403794000122','1','000042526','03403794000122',1,1,'2022-07-27','6101');
+
+INSERT INTO dbproconfer.lote (pessoaProduto_codigo,lote,pesoLiquido,pesoBruto,ncm,cst,cfop,unidadeMedida,quantidadeVolumes,valorUnitario,valorTotal,baseCalculoICMS,valorICMS,aliquotaICMS)
+	VALUES ('1120','43',4995.6,5303.45,'52051200','000','6101','KG',131.0,23.0,114898.8,114898.8,13787.86,12.0);
+
+INSERT INTO dbproconfer.nfelote (lote_id,nfe_chave)
+	VALUES (1,'28220703403794000122550010000425261000566468');
+
+INSERT INTO dbproconfer.conferencia (nfeLote_nfe_chave,usuario_id,empresaProduto_codigo,nfeLote_lote_id,conferenciaTipo_id)
+	VALUES ('28220703403794000122550010000425261000566468',1,'F20/1CRU',1,1);
